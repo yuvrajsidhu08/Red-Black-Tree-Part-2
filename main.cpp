@@ -108,3 +108,106 @@ private:
                     g->color = RED;
                     x = g;
                 }
+                else {
+                    if (x == p->left) {
+                        rightRotate(r, p);
+                        x = p;
+                        p = x->parent;
+                    }
+
+                    leftRotate(r, g);
+
+                    p->color = BLACK;
+                    g->color = RED;
+                }
+            }
+        }
+
+        r->color = BLACK;
+    }
+
+    Node* searchNode(Node* r, int v) {
+        if (!r || r->data == v) return r;
+
+        if (v < r->data)
+            return searchNode(r->left, v);
+
+        return searchNode(r->right, v);
+    }
+
+    Node* min(Node* r) {
+        while (r->left)
+            r = r->left;
+
+        return r;
+    }
+
+    Node* removeNode(Node* r, int v) {
+        if (!r) return r;
+
+        if (v < r->data)
+            r->left = removeNode(r->left, v);
+
+        else if (v > r->data)
+            r->right = removeNode(r->right, v);
+
+        else {
+            if (!r->left && !r->right) {
+                delete r;
+                return NULL;
+            }
+
+            if (!r->left) {
+                Node* t = r->right;
+                delete r;
+                return t;
+            }
+
+            if (!r->right) {
+                Node* t = r->left;
+                delete r;
+                return t;
+            }
+
+            Node* t = min(r->right);
+
+            r->data = t->data;
+
+            r->right = removeNode(r->right, t->data);
+        }
+
+        return r;
+    }
+
+    void printTree(Node* r, int s) {
+        if (!r) return;
+
+        s += 8;
+
+        printTree(r->right, s);
+
+        cout << endl;
+        for (int i = 8; i < s; i++) cout << " ";
+
+        cout << r->data << (r->color == RED ? "R" : "B");
+
+        if (r->parent)
+            cout << "(" << r->parent->data << ")";
+
+        cout << endl;
+
+        printTree(r->left, s);
+    }
+
+public:
+    RBTree() {
+        root = NULL;
+    }
+
+    void add(int v) {
+        Node* n = create(v);
+
+        root = insert(root, n);
+
+        fix(root, n);
+    }
