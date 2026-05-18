@@ -211,3 +211,82 @@ public:
 
         fix(root, n);
     }
+
+    void remove(int v) {
+        root = removeNode(root, v);
+
+        if (root)
+            root->color = BLACK;
+    }
+
+    bool search(int v) {
+        return searchNode(root, v);
+    }
+
+    void read(const char* file) {
+        ifstream f(file);
+
+        char line[1000];
+
+        f.getline(line, 1000);
+
+        char* t = strtok(line, " ");
+
+        while (t) {
+            add(atoi(t));
+            t = strtok(NULL, " ");
+        }
+    }
+
+    void print() {
+        printTree(root, 0);
+    }
+};
+
+int main() {
+    RBTree t;
+
+    char cmd[20];
+
+    while (true) {
+        cout << "\nadd remove search file print quit\n> ";
+
+        cin >> cmd;
+
+        if (!strcmp(cmd, "add")) {
+            int x;
+            cin >> x;
+            t.add(x);
+        }
+
+        else if (!strcmp(cmd, "remove")) {
+            int x;
+            cin >> x;
+            t.remove(x);
+        }
+
+        else if (!strcmp(cmd, "search")) {
+            int x;
+            cin >> x;
+
+            if (t.search(x))
+                cout << "found\n";
+            else
+                cout << "not found\n";
+        }
+
+        else if (!strcmp(cmd, "file")) {
+            char name[100];
+            cin >> name;
+            t.read(name);
+        }
+
+        else if (!strcmp(cmd, "print")) {
+            t.print();
+        }
+
+        else if (!strcmp(cmd, "quit")) {
+            break;
+        }
+    }
+}
