@@ -17,6 +17,7 @@ class RBTree {
 private:
     Node* root;
 
+    // Creates a new red node
     Node* create(int v) {
         Node* n = new Node;
         n->data = v;
@@ -25,6 +26,7 @@ private:
         return n;
     }
 
+    // Regular BST insert
     Node* insert(Node* r, Node* n) {
         if (!r) return n;
 
@@ -40,6 +42,7 @@ private:
         return r;
     }
 
+    // Left rotation
     void leftRotate(Node*& r, Node*& x) {
         Node* y = x->right;
 
@@ -56,6 +59,7 @@ private:
         x->parent = y;
     }
 
+    // Right rotation
     void rightRotate(Node*& r, Node*& x) {
         Node* y = x->left;
 
@@ -72,14 +76,17 @@ private:
         x->parent = y;
     }
 
+    // Fixes red-black tree violations after insert
     void fix(Node*& r, Node*& x) {
         while (x != r && x->parent->color == RED) {
             Node* p = x->parent;
             Node* g = p->parent;
 
+            // Parent is left child
             if (p == g->left) {
                 Node* u = g->right;
 
+                // Case 1: uncle is red
                 if (u && u->color == RED) {
                     p->color = BLACK;
                     u->color = BLACK;
@@ -87,18 +94,22 @@ private:
                     x = g;
                 }
                 else {
+                    // Case 2: triangle
                     if (x == p->right) {
                         leftRotate(r, p);
                         x = p;
                         p = x->parent;
                     }
 
+                    // Case 3: line
                     rightRotate(r, g);
 
                     p->color = BLACK;
                     g->color = RED;
                 }
             }
+
+            // Parent is right child
             else {
                 Node* u = g->left;
 
@@ -123,9 +134,11 @@ private:
             }
         }
 
+        // Root must always be black
         r->color = BLACK;
     }
 
+    // Searches for a value
     Node* searchNode(Node* r, int v) {
         if (!r || r->data == v) return r;
 
@@ -135,6 +148,7 @@ private:
         return searchNode(r->right, v);
     }
 
+    // Finds smallest node
     Node* min(Node* r) {
         while (r->left)
             r = r->left;
@@ -142,6 +156,7 @@ private:
         return r;
     }
 
+    // Removes a node
     Node* removeNode(Node* r, int v) {
         if (!r) return r;
 
@@ -152,23 +167,27 @@ private:
             r->right = removeNode(r->right, v);
 
         else {
+            // No children
             if (!r->left && !r->right) {
                 delete r;
                 return NULL;
             }
 
+            // One right child
             if (!r->left) {
                 Node* t = r->right;
                 delete r;
                 return t;
             }
 
+            // One left child
             if (!r->right) {
                 Node* t = r->left;
                 delete r;
                 return t;
             }
 
+            // Two children
             Node* t = min(r->right);
 
             r->data = t->data;
@@ -179,6 +198,7 @@ private:
         return r;
     }
 
+    // Prints tree sideways
     void printTree(Node* r, int s) {
         if (!r) return;
 
@@ -191,6 +211,7 @@ private:
 
         cout << r->data << (r->color == RED ? "R" : "B");
 
+        // Shows parent node
         if (r->parent)
             cout << "(" << r->parent->data << ")";
 
@@ -204,6 +225,7 @@ public:
         root = NULL;
     }
 
+    // Adds value to tree
     void add(int v) {
         Node* n = create(v);
 
@@ -212,6 +234,7 @@ public:
         fix(root, n);
     }
 
+    // Removes value from tree
     void remove(int v) {
         root = removeNode(root, v);
 
@@ -219,10 +242,12 @@ public:
             root->color = BLACK;
     }
 
+    // Returns true if value exists
     bool search(int v) {
         return searchNode(root, v);
     }
 
+    // Reads values from file
     void read(const char* file) {
         ifstream f(file);
 
@@ -238,6 +263,7 @@ public:
         }
     }
 
+    // Prints the tree
     void print() {
         printTree(root, 0);
     }
